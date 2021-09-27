@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "X/ZCQwIgCf7OKp8aCroEsi/h7dMOJCOfYwtTuUMn0tF4CThobwv+JpQrXBwOpbAZSiIYdz4hgQK5Whf5uHInJw==",
+  "success": true,
+  "projectFilePath": "F:\\Semester 8\\IPT Assignment # 01\\k180303_Q2\\k180303_Q2\\k180303_Q2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Noman Anjum\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.18\\microsoft.netcore.app.host.win-x64.3.1.18.nupkg.sha512"
+  ],
+  "logs": []
+}
