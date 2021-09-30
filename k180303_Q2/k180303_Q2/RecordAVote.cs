@@ -10,6 +10,7 @@ namespace k180303_Q2
     
     public partial class RecordAVote : Form
     {
+        
        protected Dictionary<string, string> authenticVoter =  new Dictionary<string, string>();
         protected string StationID;
         protected string NIC;
@@ -21,15 +22,21 @@ namespace k180303_Q2
 
         private void RecordAVote_Load(object sender, EventArgs e)
         {
-            string root = @"C:\k180303OutputFiles\Q2";
+             string root = ConfigurationManager.AppSettings["OutputXml"];
+            string Station210001Files = ConfigurationManager.AppSettings["Station210001"];
+            string Station210002Files = ConfigurationManager.AppSettings["Station210002"];
 
             // If directory does not exist, create it. 
             if (!Directory.Exists(root))
             {
                 Directory.CreateDirectory(root);
+                Directory.CreateDirectory(Station210001Files);
+                Directory.CreateDirectory(Station210002Files);
+
             }
 
-            String voterFile = ConfigurationManager.AppSettings["VoterList"];
+            
+            string voterFile = ConfigurationManager.AppSettings["VoterList"];
             try
             {
                 if (File.Exists(voterFile))
@@ -117,37 +124,79 @@ namespace k180303_Q2
                 return;
 
             }
+
+            string voteCastedList = ConfigurationManager.AppSettings["VoteCastedList"];
+            try
+            {
+                if (!File.Exists(voteCastedList))
+                {
+                    System.IO.File.WriteAllText(voteCastedList, NIC);
+                }
+                else
+                {
+                    string[] votedPeople = File.ReadAllText(voteCastedList).Split(Environment.NewLine);
+                    for (int people = 0; people < votedPeople.Length; people++)
+                    {
+                        if (votedPeople[people] == NIC)
+                        {
+                            MessageBox.Show("You already have casted your vote!!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            CNICBox.Text = "(Format: 99999-9999999-9)";
+                            PresidentComboBox.Text = "Choose President";
+                            VisePresidentComboBox.Text = "Choose Vice President";
+                            GeneralSecretaryComboBox.Text = "Choose General Secretary";
+                            return;
+                        }
+                    }
+                    File.AppendAllText(voteCastedList, Environment.NewLine + NIC);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Unable to create file!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+
+
+            string[] President = PresidentComboBox.SelectedItem.ToString().Split("(");
+            string PresidentID = President[0].Trim();
+            string[] VicePresident = VisePresidentComboBox.Text.ToString().Split("(");
+            string VicePresidentID = VicePresident[0].Trim();
+            string[] GeneralSecretary = GeneralSecretaryComboBox.Text.ToString().Split("(");
+            string GeneralSecretaryID = GeneralSecretary[0].Trim();
+
             
-
-            string [] President = PresidentComboBox.SelectedItem.ToString().Split("(");
-            string PresidentID = President[0];
-            string [] VicePresident = VisePresidentComboBox.Text.ToString().Split("(");
-            string VicePresidentID = VicePresident[0];
-            string [] GeneralSecretary = GeneralSecretaryComboBox.Text.ToString().Split("(");
-            string GeneralSecretaryID = GeneralSecretary[0];
-
-            String storeOutputXml = ConfigurationManager.AppSettings["OutputXml"];
             DateTime dt = DateTime.Now;
             string month = dt.ToString("MMM");
-           string filepath = storeOutputXml + "//AA_Elec_" + StationID + "_" + dt.Day.ToString() + month + "21_" + dt.Hour.ToString() + "00.xml";
-            if(!File.Exists(filepath))
+
+            string Station210001Files = ConfigurationManager.AppSettings["Station210001"];
+            string Station210002Files = ConfigurationManager.AppSettings["Station210002"];
+            string filepath;
+            if (StationID == "210001")
+            {
+                 filepath = Station210001Files + "//AA_Elec_" + StationID + "_" + dt.Day.ToString() + month + "21_" + dt.Hour.ToString() + "00.xml";
+            }
+            else
+            {
+                 filepath = Station210002Files + "//AA_Elec_" + StationID + "_" + dt.Day.ToString() + month + "21_" + dt.Hour.ToString() + "00.xml";
+            }
+            if (!File.Exists(filepath))
             {
                 XDocument voteinfo = new XDocument(new XElement("AllVotes",
                                                new XElement("Votes",
                                                new XElement("Vote",
                                                new XElement("NIC", NIC),
                                                new XElement("Position", "President"),
-                                               new XElement("CandidateID", PresidentID.Trim())),
+                                               new XElement("CandidateID", PresidentID)),
 
                                                new XElement("Vote",
                                                new XElement("NIC", NIC),
                                                new XElement("Position", "Vice President"),
-                                               new XElement("CandidateID", VicePresidentID.Trim())),
+                                               new XElement("CandidateID", VicePresidentID)),
 
                                                new XElement("Vote",
                                                new XElement("NIC", NIC),
                                                new XElement("Position", "General Secretary"),
-                                               new XElement("CandidateID", GeneralSecretaryID.Trim()))
+                                               new XElement("CandidateID", GeneralSecretaryID))
 
                                            )));
                 voteinfo.Save(filepath);
@@ -162,30 +211,47 @@ namespace k180303_Q2
                                            new XElement("Vote",
                                             new XElement("NIC", NIC),
                                             new XElement("Position", "President"),
-                                            new XElement("CandidateID", PresidentID.Trim())),
+                                            new XElement("CandidateID", PresidentID)),
 
                                             new XElement("Vote",
                                             new XElement("NIC", NIC),
                                             new XElement("Position", "Vice President"),
-                                            new XElement("CandidateID", VicePresidentID.Trim())),
+                                            new XElement("CandidateID", VicePresidentID)),
 
                                             new XElement("Vote",
                                             new XElement("NIC", NIC),
                                             new XElement("Position", "General Secretary"),
-                                            new XElement("CandidateID", GeneralSecretaryID.Trim()))
+                                            new XElement("CandidateID", GeneralSecretaryID))
 
 
 
                     ));
                 doc.Save(filepath);
-              
+
             }
-            
-           MessageBox.Show("Your Response Has Been Recorded", "Alumini Accociation Election 2021",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
-            CNICBox.Clear();
-            PresidentComboBox.Text = "";
-            VisePresidentComboBox.Text = "";
-            GeneralSecretaryComboBox.Text = "";
+            //string AllXML = ConfigurationManager.AppSettings["AllXMLList"];
+            //try
+            //{
+            //    if (!File.Exists(AllXML))
+            //    {
+            //        System.IO.File.WriteAllText(AllXML, filepath);
+            //    }
+            //    else
+            //    {
+            //        File.AppendAllText(AllXML,Environment.NewLine + filepath);
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //    MessageBox.Show("Unable to create file!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            //}
+
+            MessageBox.Show("Your Response Has Been Recorded", "Alumini Accociation Election 2021",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
+            CNICBox.Text = "(Format: 99999-9999999-9)";
+            PresidentComboBox.Text = "Choose President";
+            VisePresidentComboBox.Text = "Choose Vice President";
+            GeneralSecretaryComboBox.Text = "Choose General Secretary";
         }
 
         private void LogoutButton_Click(object sender, EventArgs e)

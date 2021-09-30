@@ -83,8 +83,6 @@ namespace k180303_Q2
         private void Login_form_Load(object sender, EventArgs e)
         {
 
-           
-
             String path = ConfigurationManager.AppSettings["FilePath"];
 
             try
