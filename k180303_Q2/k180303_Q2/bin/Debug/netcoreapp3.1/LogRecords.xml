@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AllVotes>
+  <Votes>
+    <Vote>
+      <NIC>42201-3456789-0</NIC>
+      <Position>President</Position>
+      <CandidateID>k050004</CandidateID>
+    </Vote>
+    <Vote>
+      <NIC>42201-3456789-0</NIC>
+      <Position>Vice President</Position>
+      <CandidateID>k071241</CandidateID>
+    </Vote>
+  </Votes>
+  <Votes>42301-1234567-2Presidentnjwqfk7</Votes>
+</AllVotes>

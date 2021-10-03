@@ -1,17 +1,21 @@
-﻿using System;
+﻿using k180303_Q2.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace k180303_Q2
 {
-    
+
     public partial class RecordAVote : Form
     {
-        
-       protected Dictionary<string, string> authenticVoter =  new Dictionary<string, string>();
+
+        protected Dictionary<string, string> authenticVoter = new Dictionary<string, string>();
+        protected List<Vote> votes = new List<Vote>();
+        protected Vote voteobject { get; set; } = new Vote();
         protected string StationID;
         protected string NIC;
         public RecordAVote(string stationid)
@@ -22,7 +26,7 @@ namespace k180303_Q2
 
         private void RecordAVote_Load(object sender, EventArgs e)
         {
-             string root = ConfigurationManager.AppSettings["OutputXml"];
+            string root = ConfigurationManager.AppSettings["OutputXml"];
             string Station210001Files = ConfigurationManager.AppSettings["Station210001"];
             string Station210002Files = ConfigurationManager.AppSettings["Station210002"];
 
@@ -35,7 +39,7 @@ namespace k180303_Q2
 
             }
 
-            
+
             string voterFile = ConfigurationManager.AppSettings["VoterList"];
             try
             {
@@ -81,11 +85,11 @@ namespace k180303_Q2
 
                             if (parseCandidate[2] == "President")
                             {
-                                
+
                                 PresidentComboBox.Items.Add(name);
                                 name = null;
                             }
-                            else if(parseCandidate[2] == "Vice President")
+                            else if (parseCandidate[2] == "Vice President")
                             {
                                 VisePresidentComboBox.Items.Add(name);
                                 name = null;
@@ -102,7 +106,7 @@ namespace k180303_Q2
                 }
 
             }
-            catch(Exception)
+            catch (Exception)
             {
                 MessageBox.Show("File Or Directory Not Found!!", "Error 404", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
@@ -116,6 +120,11 @@ namespace k180303_Q2
 
         private void VoteCastingButton_Click(object sender, EventArgs e)
         {
+            if (NIC == "Format: 99999-9999999-9" || NIC == "" || NIC == null)
+            {
+                MessageBox.Show("Kindly Enter NIC!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             bool NICconfirmation = authenticVoter.ContainsKey(NIC);
             if (!NICconfirmation)
             {
@@ -123,6 +132,22 @@ namespace k180303_Q2
                 CNICBox.Clear();
                 return;
 
+            }
+
+            
+
+
+            string[] President = PresidentComboBox.Text.ToString().Split("(");
+            string PresidentID = President[0].Trim();
+            string[] VicePresident = VisePresidentComboBox.Text.ToString().Split("(");
+            string VicePresidentID = VicePresident[0].Trim();
+            string[] GeneralSecretary = GeneralSecretaryComboBox.Text.ToString().Split("(");
+            string GeneralSecretaryID = GeneralSecretary[0].Trim();
+
+            if (PresidentID == "Choose President" && VicePresidentID == "Choose Vice President" && GeneralSecretaryID == "Choose General Secretary")
+            {
+                MessageBox.Show("Kindly Choose Atleast One Person !!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
             string voteCastedList = ConfigurationManager.AppSettings["VoteCastedList"];
@@ -156,15 +181,36 @@ namespace k180303_Q2
 
             }
 
+            if (PresidentID != "Choose President")
+            {
+                voteobject.NIC = NIC;
+                voteobject.Position = "President";
+                voteobject.ID = PresidentID;
 
-            string[] President = PresidentComboBox.SelectedItem.ToString().Split("(");
-            string PresidentID = President[0].Trim();
-            string[] VicePresident = VisePresidentComboBox.Text.ToString().Split("(");
-            string VicePresidentID = VicePresident[0].Trim();
-            string[] GeneralSecretary = GeneralSecretaryComboBox.Text.ToString().Split("(");
-            string GeneralSecretaryID = GeneralSecretary[0].Trim();
+                Vote newvote = new Vote(voteobject);
+                votes.Add(newvote);
 
-            
+            }
+            if (VicePresidentID != "Choose Vice President")
+            {
+                voteobject.NIC = NIC;
+                voteobject.Position = "Vice President";
+                voteobject.ID = VicePresidentID;
+
+                Vote newvote = new Vote(voteobject);
+                votes.Add(newvote);
+            }
+            if (GeneralSecretaryID != "Choose General Secretary")
+            {
+                voteobject.NIC = NIC;
+                voteobject.Position = "General Secretary";
+                voteobject.ID = GeneralSecretaryID;
+
+                Vote newvote = new Vote(voteobject);
+                votes.Add(newvote);
+            }
+
+
             DateTime dt = DateTime.Now;
             string month = dt.ToString("MMM");
 
@@ -181,71 +227,67 @@ namespace k180303_Q2
             }
             if (!File.Exists(filepath))
             {
-                XDocument voteinfo = new XDocument(new XElement("AllVotes",
-                                               new XElement("Votes",
-                                               new XElement("Vote",
-                                               new XElement("NIC", NIC),
-                                               new XElement("Position", "President"),
-                                               new XElement("CandidateID", PresidentID)),
+                var doc = new XDocument();
+                var rootElement = new XElement("AllVotes");
+                doc.Add(rootElement);
+                var newElement = new XElement("Votes");
 
-                                               new XElement("Vote",
-                                               new XElement("NIC", NIC),
-                                               new XElement("Position", "Vice President"),
-                                               new XElement("CandidateID", VicePresidentID)),
+                foreach (var eachvote in votes)
+                {
 
-                                               new XElement("Vote",
-                                               new XElement("NIC", NIC),
-                                               new XElement("Position", "General Secretary"),
-                                               new XElement("CandidateID", GeneralSecretaryID))
+                    var singlevote =
+                    new XElement("Vote",
+                    new XElement("NIC", eachvote.NIC),
+                    new XElement("Position", eachvote.Position),
+                    new XElement("CandidateID", eachvote.ID));
+                    newElement.Add(singlevote);
 
-                                           )));
-                voteinfo.Save(filepath);
+                }
+                doc.Element("AllVotes").Add(newElement);
+                doc.Save(filepath);
+
+                //XmlWriterSettings setting = new XmlWriterSettings();
+                //setting.ConformanceLevel = ConformanceLevel.Auto;
+
+                //using (XmlWriter writer = XmlWriter.Create(filepath, setting))
+                //{
+                //    writer.WriteStartElement("AllVotes");
+                //    writer.WriteStartElement("Votes");
+                //    foreach (var eachvote in votes)
+                //    {
+                //        writer.WriteStartElement("Vote");
+                //        writer.WriteElementString("NIC", eachvote.NIC.ToString());
+                //        writer.WriteElementString("Position", eachvote.Position.ToString() );
+                //        writer.WriteElementString("CandidateID", eachvote.ID.ToString());
+                //        writer.WriteEndElement();
+                //    }
+                //    writer.WriteEndElement();
+                //    writer.Flush();
+                //}
+
+                votes.Clear();
+               
             }
 
             else
             {
-
-                XDocument doc = XDocument.Load(filepath);
-                XElement school = doc.Element("AllVotes");
-                school.Add(new XElement("Votes",
-                                           new XElement("Vote",
-                                            new XElement("NIC", NIC),
-                                            new XElement("Position", "President"),
-                                            new XElement("CandidateID", PresidentID)),
-
-                                            new XElement("Vote",
-                                            new XElement("NIC", NIC),
-                                            new XElement("Position", "Vice President"),
-                                            new XElement("CandidateID", VicePresidentID)),
-
-                                            new XElement("Vote",
-                                            new XElement("NIC", NIC),
-                                            new XElement("Position", "General Secretary"),
-                                            new XElement("CandidateID", GeneralSecretaryID))
-
-
-
-                    ));
+                var doc = XDocument.Load(filepath);
+                var newElement = new XElement("Votes");
+                foreach (var eachvote in votes)
+                {
+                    
+                  var singlevote = 
+                  new XElement("Vote",
+                  new XElement("NIC", eachvote.NIC),
+                  new XElement("Position", eachvote.Position),
+                  new XElement("CandidateID", eachvote.ID));
+                    newElement.Add(singlevote);
+                   
+                }
+                doc.Element("AllVotes").Add(newElement);
                 doc.Save(filepath);
+             }
 
-            }
-            //string AllXML = ConfigurationManager.AppSettings["AllXMLList"];
-            //try
-            //{
-            //    if (!File.Exists(AllXML))
-            //    {
-            //        System.IO.File.WriteAllText(AllXML, filepath);
-            //    }
-            //    else
-            //    {
-            //        File.AppendAllText(AllXML,Environment.NewLine + filepath);
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //    MessageBox.Show("Unable to create file!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            //}
 
             MessageBox.Show("Your Response Has Been Recorded", "Alumini Accociation Election 2021",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
             CNICBox.Text = "(Format: 99999-9999999-9)";
