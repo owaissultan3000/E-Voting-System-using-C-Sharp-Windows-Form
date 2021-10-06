@@ -246,26 +246,7 @@ namespace k180303_Q2
                 doc.Element("AllVotes").Add(newElement);
                 doc.Save(filepath);
 
-                //XmlWriterSettings setting = new XmlWriterSettings();
-                //setting.ConformanceLevel = ConformanceLevel.Auto;
-
-                //using (XmlWriter writer = XmlWriter.Create(filepath, setting))
-                //{
-                //    writer.WriteStartElement("AllVotes");
-                //    writer.WriteStartElement("Votes");
-                //    foreach (var eachvote in votes)
-                //    {
-                //        writer.WriteStartElement("Vote");
-                //        writer.WriteElementString("NIC", eachvote.NIC.ToString());
-                //        writer.WriteElementString("Position", eachvote.Position.ToString() );
-                //        writer.WriteElementString("CandidateID", eachvote.ID.ToString());
-                //        writer.WriteEndElement();
-                //    }
-                //    writer.WriteEndElement();
-                //    writer.Flush();
-                //}
-
-                votes.Clear();
+              votes.Clear();
                
             }
 
@@ -286,7 +267,8 @@ namespace k180303_Q2
                 }
                 doc.Element("AllVotes").Add(newElement);
                 doc.Save(filepath);
-             }
+                votes.Clear();
+            }
 
 
             MessageBox.Show("Your Response Has Been Recorded", "Alumini Accociation Election 2021",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);

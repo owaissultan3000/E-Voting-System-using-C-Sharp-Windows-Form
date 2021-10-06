@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+          margin-top: 50px;
+        }
+        
+        td{
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+          font-weight: bold;
+           font-size: 20px;
+            background-color: rgb(122, 179, 226);
+        }
+        th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr{
+            background-color: rgb(135, 166, 190); 
+            font-family:Georgia, 'Times New Roman', Times, serif;
+        }
+        
+        </style>
+</head>
+<body>
+       
+        <div style="display: flex; flex-direction: column; justify-content: center; width: 100%; height: 98vh; background-color: #ADD8E6; background-attachment: fixed;">
+        <div style="display: flex; width: 100%; align-items: center; margin-top: -15%;">
+            <div style="margin-left: 30%;">
+                <img src="./NU_logo.png" width="200px" height="200px"/>
+            </div>
+            <div style="margin-left: 30px;">
+                <h1>Alumini Association Election-2021 Result</h1>
+            </div>
+        </div>
+        
+        <div style=" margin-top: 70px; display: flex; justify-content:center; width: 80%; margin-left: 10%; " >
+            
+            <div style="width: 35%;">
+            <table id="table1">
+                <thead>
+                    <tr>
+                        <td colspan = "4" style="text-align: center; font-size: 28px;">"President"</td>
+                    </tr>
+
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Votes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  
+                </tbody>
+                
+              </table>
+            </div>
+
+              <div style="width: 35%; margin-left: 2%;">
+              <table id="table2">
+                <thead>
+                    <tr>
+                        <td colspan = "4" style="text-align: center; font-size: 28px;">"Vice President"</td>
+                     </tr>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Votes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  
+                </tbody>
+               
+              </table>
+            </div>
+
+            <div style="width: 35%; margin-left: 2%;">
+              <table id="table3">
+                <thead>
+                    <tr>
+                        <td colspan = "4" style="text-align: center; font-size: 28px;">"General Secretary"</td>
+                     </tr>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Votes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                    
+                </tbody>
+                
+              </table>
+            </div>
+        
+        </div>
+
+    </div>
+    <script src="../Files/CandidateList.txt" type="text/javascript">
+    // fetch(script.src)
+    // .then(response => response.text())
+    // .then(data => console.log(data));
+    var abc = document.getElementById('script').getAttribute('src')
+    console.log(abc)
+    </script>
+
+    <script>
+        let xmlContent = '';
+        var president = {};
+        var vicepresident = {};
+        var generalsecretary = {};
+        let pTable = document.getElementById('table1');
+        let vpTable = document.getElementById('table2');
+        let gsTable = document.getElementById('table3');
+
+        function readXml(fileName)
+        {
+            fetch(fileName).then((response)=> {
+            response.text().then((xml)=>{
+                xmlContent = xml;
+
+                let parser = new DOMParser();
+                let xmlDOM = parser.parseFromString(xmlContent, 'application/xml');
+                let votes = xmlDOM.querySelectorAll('Vote');
+
+                votes.forEach(voteXmlNode => {
+                    if(voteXmlNode.children[1].innerHTML == "President")
+                    {
+                        if(president[(voteXmlNode.children[2].innerHTML).toString()] == undefined)
+                        {
+
+                           president[(voteXmlNode.children[2].innerHTML).toString()] = 1;
+                        }
+                        else
+                        {
+                            president[(voteXmlNode.children[2].innerHTML).toString()] += 1;
+                        }
+
+                    }
+                    else if(voteXmlNode.children[1].innerHTML == "Vice President")
+                    {
+                        if(vicepresident[(voteXmlNode.children[2].innerHTML).toString()] == undefined)
+                        {
+                            vicepresident[(voteXmlNode.children[2].innerHTML).toString()] = 1;
+                        }
+                        else
+                        {
+                            vicepresident[(voteXmlNode.children[2].innerHTML).toString()] += 1;
+                        }
+
+                    }
+                    else if(voteXmlNode.children[1].innerHTML == "General Secretary")
+                    {
+                        if(generalsecretary[(voteXmlNode.children[2].innerHTML).toString()] == undefined)
+                        {
+                            generalsecretary[(voteXmlNode.children[2].innerHTML).toString()] = 1;
+                        }
+                        else
+                        {
+                            generalsecretary[(voteXmlNode.children[2].innerHTML).toString()] += 1;
+                        }
+
+                    }
+
+                    
+                }              
+                );
+            });
+        });
+
+        }
+
+        readXml("station1.xml")    
+        readXml("station2.xml")      
+  
+        setTimeout(function(){ 
+            console.log(president);
+            console.log(vicepresident);
+            console.log(generalsecretary);
+            var keyValues = []
+
+            // for (var key in president) {
+            // keyValues.push([ key, president[key] ])
+            // }
+            // keyValues.sort(function compare(kv1, kv2) {
+           
+            // return  kv2[1] - kv1[1]
+            // })
+            // console.log(keyValues,keyValues[0][1]);
+         }, 3000);
+                    // console.log(president["k030001"]);
+                    
+                    // for (var i=0;i,5;i++)
+                    // {
+                    //     console.log("hello");
+                    // }
+
+                    for (var i=0;i<5;i++)
+                    {
+                        let row = document.createElement('tr');
+
+                    //author
+                    let td = document.createElement('td');
+                    td.innerText = "owais";
+                    row.appendChild(td);
+
+                    td = document.createElement('td');
+                    td.innerText = "5";
+                    row.appendChild(td);
+                    pTable.children[0].appendChild(row);
+                    pTable.children[1].appendChild(row);
+                    
+                    }
+
+
+
+
+                    
+    
+    </script>
+
+      
+</body>
+</html> 

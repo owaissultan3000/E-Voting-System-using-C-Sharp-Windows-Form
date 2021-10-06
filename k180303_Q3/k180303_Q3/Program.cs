@@ -13,12 +13,15 @@ namespace k180303_Q3
         {
             try
             {
+                var gparent = Directory.GetParent(Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName));
+                string root = gparent.ToString();
+                root += "\\k180303_Q4";
                 string sourcedirectoy = ConfigurationManager.AppSettings["PathStation210001"];
 
                 var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
 
                 string[] fileNameParse = files[0].Split("\\");
-                string fileName = fileNameParse[4].Substring(0, 22);
+                string fileName = fileNameParse[4].Substring(0, 21);
 
 
 
@@ -34,7 +37,12 @@ namespace k180303_Q3
 
                 }
                 string output = ConfigurationManager.AppSettings["Directory"];
-                xml1.Save(output + "\\" + fileName);
+                output += "\\" + fileName + ".xml";
+                root += "\\" + "station1" + ".xml";
+                xml1.Save(output);
+                xml1.Save(root);
+
+
             }
             catch (Exception)
             {
@@ -42,18 +50,21 @@ namespace k180303_Q3
                 return;
             }
             
-         
         }
 
         public void MergeXMLStation210002()
         {
             try
             {
+                var gparent = Directory.GetParent(Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName));
+                string root = gparent.ToString();
+                root += "\\k180303_Q4";
+
                 string sourcedirectoy = ConfigurationManager.AppSettings["PathStation210002"];
                 var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
 
                 string[] fileNameParse = files[0].Split("\\");
-                string fileName = fileNameParse[4].Substring(0, 22);
+                string fileName = fileNameParse[4].Substring(0, 21);
 
                 var xml02 = XDocument.Load(files[0]);
 
@@ -66,7 +77,10 @@ namespace k180303_Q3
                     }
                 }
                 string output = ConfigurationManager.AppSettings["Directory"];
-                xml02.Save(output + "\\" + fileName);
+                output += "\\" + fileName + ".xml";
+                root += "\\" + "station2" + ".xml";
+                xml02.Save(output );
+                xml02.Save(root);
             }
             catch(Exception)
             {
@@ -75,17 +89,34 @@ namespace k180303_Q3
             }
             
         }
+
+        
         static void Main(string[] args)
         {
+
             string directory = ConfigurationManager.AppSettings["Directory"];
 
-            if (!Directory.Exists(directory))
+            if (Directory.Exists(directory))
+            {
+                Directory.GetFiles(directory).ToList().ForEach(File.Delete);
+            }
+            else
             {
                 Directory.CreateDirectory(directory);
             }
-            if(Directory.Exists(directory))
+           
+            var gparent = Directory.GetParent(Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName));
+            string root = gparent.ToString();
+            root += "\\k180303_Q4";
+
+            if(Directory.Exists(root))
             {
-                Directory.GetFiles(directory).ToList().ForEach(File.Delete);
+                DirectoryInfo di = new DirectoryInfo(root);
+                FileInfo[] fi = di.GetFiles("*.xml");
+                foreach (FileInfo filetemp in fi)
+                {
+                    filetemp.Delete();
+                }
             }
             DataAggregation dataAggregation = new DataAggregation();
             dataAggregation.MergeXMLStation210001();
