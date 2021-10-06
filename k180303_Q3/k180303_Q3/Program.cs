@@ -57,8 +57,12 @@ namespace k180303_Q3
             try
             {
                 var gparent = Directory.GetParent(Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName));
-                string root = gparent.ToString();
-                root += "\\k180303_Q4";
+                string root1 = gparent.ToString();
+                root1 += "\\k180303_Q4";
+                string source = gparent.ToString();
+                source += "\\Files\\CandidateList.txt";
+                string destination = gparent.ToString();
+                destination += "\\k180303_Q4";
 
                 string sourcedirectoy = ConfigurationManager.AppSettings["PathStation210002"];
                 var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
@@ -78,9 +82,15 @@ namespace k180303_Q3
                 }
                 string output = ConfigurationManager.AppSettings["Directory"];
                 output += "\\" + fileName + ".xml";
-                root += "\\" + "station2" + ".xml";
+                root1 += "\\" + "station2" + ".xml";
                 xml02.Save(output );
-                xml02.Save(root);
+                xml02.Save(root1);
+
+                if(File.Exists(source))
+                {
+                    File.Copy(source, destination + "\\CandidateList.txt");
+
+                }
             }
             catch(Exception)
             {
@@ -113,6 +123,12 @@ namespace k180303_Q3
             {
                 DirectoryInfo di = new DirectoryInfo(root);
                 FileInfo[] fi = di.GetFiles("*.xml");
+                foreach (FileInfo filetemp in fi)
+                {
+                    filetemp.Delete();
+                }
+
+                fi = di.GetFiles("*.txt");
                 foreach (FileInfo filetemp in fi)
                 {
                     filetemp.Delete();

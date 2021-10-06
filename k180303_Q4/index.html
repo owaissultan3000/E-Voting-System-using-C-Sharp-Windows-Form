@@ -106,13 +106,7 @@
         </div>
 
     </div>
-    <script src="../Files/CandidateList.txt" type="text/javascript">
-    // fetch(script.src)
-    // .then(response => response.text())
-    // .then(data => console.log(data));
-    var abc = document.getElementById('script').getAttribute('src')
-    console.log(abc)
-    </script>
+   
 
     <script>
         let xmlContent = '';
@@ -179,10 +173,20 @@
         });
 
         }
-
-        readXml("station1.xml")    
+        
+         function getSampleText() {
+            fetch('CandidateList.txt', {mode: "no-cors"})
+            .then(response => response.text()) 
+            .then(textString => {
+                console.log(textString);
+            });
+            
+            }
+            getSampleText();
+    
+        readXml("station1.xml");    
         readXml("station2.xml")      
-  
+      
         setTimeout(function(){ 
             console.log(president);
             console.log(vicepresident);
@@ -221,12 +225,7 @@
                     pTable.children[1].appendChild(row);
                     
                     }
-
-
-
-
                     
-    
     </script>
 
       
