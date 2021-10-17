@@ -13,16 +13,13 @@ namespace k180303_Q3
         {
             try
             {
-                var gparent = Directory.GetParent(Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName));
-                string root = gparent.ToString();
-                root += "\\k180303_Q4";
+            
                 string sourcedirectoy = ConfigurationManager.AppSettings["PathStation210001"];
 
                 var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
 
                 string[] fileNameParse = files[0].Split("\\");
                 string fileName = fileNameParse[4].Substring(0, 21);
-
 
 
                 var xml1 = XDocument.Load(files[0]);
@@ -38,16 +35,15 @@ namespace k180303_Q3
                 }
                 string output = ConfigurationManager.AppSettings["Directory"];
                 output += "\\" + fileName + ".xml";
-                root += "\\" + "station1" + ".xml";
                 xml1.Save(output);
-                xml1.Save(root);
+                
 
 
             }
             catch (Exception)
             {
                 Console.WriteLine("Something went wrong!!");
-                return;
+                System.Environment.Exit(0);
             }
             
         }
@@ -56,13 +52,6 @@ namespace k180303_Q3
         {
             try
             {
-                var gparent = Directory.GetParent(Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName));
-                string root1 = gparent.ToString();
-                root1 += "\\k180303_Q4";
-                string source = gparent.ToString();
-                source += "\\Files\\CandidateList.txt";
-                string destination = gparent.ToString();
-                destination += "\\k180303_Q4";
 
                 string sourcedirectoy = ConfigurationManager.AppSettings["PathStation210002"];
                 var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
@@ -82,20 +71,12 @@ namespace k180303_Q3
                 }
                 string output = ConfigurationManager.AppSettings["Directory"];
                 output += "\\" + fileName + ".xml";
-                root1 += "\\" + "station2" + ".xml";
                 xml02.Save(output );
-                xml02.Save(root1);
-
-                if(File.Exists(source))
-                {
-                    File.Copy(source, destination + "\\CandidateList.txt");
-
-                }
             }
             catch(Exception)
             {
                 Console.WriteLine("Something went wrong!!");
-                return;
+                System.Environment.Exit(0);
             }
             
         }
