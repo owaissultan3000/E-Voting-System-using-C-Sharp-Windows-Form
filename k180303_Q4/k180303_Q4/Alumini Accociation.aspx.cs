@@ -16,7 +16,7 @@ namespace k180303_Q4
         public Dictionary<string, int> VicePresident = new Dictionary<string, int>();
         public Dictionary<string, int> GeneralSecratery = new Dictionary<string, int>();
         public Dictionary<string, string> CandidateList = new Dictionary<string, string>();
-
+        
         protected void Page_Load(object sender, EventArgs e)
         {
          
@@ -107,6 +107,8 @@ namespace k180303_Q4
                             }
                         }
                     }
+                      
+
 
                 }
                 catch (Exception )
@@ -115,6 +117,43 @@ namespace k180303_Q4
                     System.Environment.Exit(0);
                 }
             }
+            var items = from pair in President orderby pair.Value descending select pair;
+            var sortedDictionary = items.ToDictionary(entry => entry.Key,
+                                              entry => entry.Value);
+            President.Clear();
+            foreach (var item in sortedDictionary)
+            {
+                string  name = item.Key;
+                int voteCount = item.Value;
+                President.Add(name, voteCount);
+            }
+
+            sortedDictionary.Clear();
+
+            items = from pair in VicePresident orderby pair.Value descending select pair;
+            sortedDictionary = items.ToDictionary(entry => entry.Key,
+                                               entry => entry.Value);
+            VicePresident.Clear();
+            foreach (var item in sortedDictionary)
+            {
+                string name = item.Key;
+                int voteCount = item.Value;
+                VicePresident.Add(name, voteCount);
+            }
+
+            sortedDictionary.Clear();
+
+            items = from pair in GeneralSecratery orderby pair.Value descending select pair;
+            sortedDictionary = items.ToDictionary(entry => entry.Key,
+                                               entry => entry.Value);
+            GeneralSecratery.Clear();
+            foreach (var item in sortedDictionary)
+            {
+                string name = item.Key;
+                int voteCount = item.Value;
+                GeneralSecratery.Add(name, voteCount);
+            }
+
             Page.DataBind();
 
 
