@@ -26,6 +26,7 @@ namespace k180303_Q2
 
         private void RecordAVote_Load(object sender, EventArgs e)
         {
+           
             string root = ConfigurationManager.AppSettings["OutputXml"];
             string Station210001Files = ConfigurationManager.AppSettings["Station210001"];
             string Station210002Files = ConfigurationManager.AppSettings["Station210002"];

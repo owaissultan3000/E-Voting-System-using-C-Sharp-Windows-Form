@@ -19,7 +19,8 @@ namespace k180303_Q3
                 var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
 
                 string[] fileNameParse = files[0].Split("\\");
-                string fileName = fileNameParse[4].Substring(0, 21);
+                string[] temp = fileNameParse[4].Split("_");
+                string fileName = temp[0]+"_"+ temp[1] + "_" + temp[2] + "_" + temp[3] ;
 
 
                 var xml1 = XDocument.Load(files[0]);
@@ -57,7 +58,8 @@ namespace k180303_Q3
                 var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
 
                 string[] fileNameParse = files[0].Split("\\");
-                string fileName = fileNameParse[4].Substring(0, 21);
+                string[] temp = fileNameParse[4].Split("_");
+                string fileName = temp[0] + "_" + temp[1] + "_" + temp[2] + "_" + temp[3];
 
                 var xml02 = XDocument.Load(files[0]);
 
