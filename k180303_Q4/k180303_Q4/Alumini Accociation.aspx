@@ -39,11 +39,11 @@
     <form id="form1" runat="server">
        <div style="display: flex; flex-direction: column; justify-content: center; width: 100%; height: 98vh; background-color: #ADD8E6; background-attachment: fixed;">
         <div style="display: flex; width: 100%; align-items: center; margin-top: -15%;">
-            <div style="margin-left: 30%;">
-                <img src="./Image/NU_logo.png"style="width:200px; height:200px;" />
+            <div style="margin-left: 13%;">
+                <img src="./Image/NU_logo.png"style="width:250px; height:250px;" />
             </div>
             <div style="margin-left: 30px;">
-                <h1>Alumini Association Election-2021 Result</h1>
+                <h1 style="font-size:4rem">"Alumini Association Election-2021 Results"</h1>
             </div>
         </div>
         
