@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -9,36 +10,53 @@ namespace k180303_Q3
     class DataAggregation
     {
 
-        public void MergeXMLStation210001()
+        public void MergeXML(string sourcedirectory)
         {
             try
             {
-            
-                string sourcedirectoy = ConfigurationManager.AppSettings["PathStation210001"];
-
-                var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
-
-                string[] fileNameParse = files[0].Split("\\");
-                string[] temp = fileNameParse[4].Split("_");
-                string fileName = temp[0]+"_"+ temp[1] + "_" + temp[2] + "_" + temp[3] ;
-
-
-                var xml1 = XDocument.Load(files[0]);
-
-                if (files.Length > 1)
+                
+                string[] files = Directory.GetFiles(sourcedirectory, "*.xml", SearchOption.AllDirectories);
+                Dictionary<string, List<string>> creationDate = new Dictionary<string, List<string>>();
+                string temp1 = files[0].Split("_")[3];
+                for (int i=0;i<files.Length; i++)
                 {
-                    for (int count = 1; count < files.Length; count++)
+                    string temp = files[i].Split("_")[3];
+                    if (creationDate.ContainsKey(temp))
                     {
-                        var newxml = XDocument.Load(files[count]);
-                        xml1.Descendants("Votes").LastOrDefault().AddAfterSelf(newxml.Descendants("Votes"));
+                        var tempList = creationDate[temp];
+                        tempList.Add(files[i]);
+                        creationDate[temp] = tempList;
                     }
+                    else
+                    {
+                        List<string> data =new List<string>();
+                        data.Add(files[i]);
+                        creationDate[temp] = data;
+                    }
+                }
+
+                foreach (string key in creationDate.Keys)
+                {
+                    
+                    List<string> fileList = creationDate[key];
+                    string[] filenameparse = fileList[0].Split("\\");
+                    string[] temp = filenameparse[4].Split("_");
+                    string filename = temp[0] + "_" + temp[1] + "_" + temp[2] + "_" + temp[3];
+                    var xml1 = XDocument.Load(fileList[0]);
+                    if(fileList.Count > 1)
+                    {
+                        for (int i = 1; i < fileList.Count; i++)
+                        {
+                            var newxml = XDocument.Load(fileList[i]);
+                             xml1.Descendants("Votes").LastOrDefault().AddAfterSelf(newxml.Descendants("Votes"));
+                        }
+            
+                    }
+                    string output = ConfigurationManager.AppSettings["Directory"];
+                    output += "\\" + filename + ".xml";
+                    xml1.Save(output);
 
                 }
-                string output = ConfigurationManager.AppSettings["Directory"];
-                output += "\\" + fileName + ".xml";
-                xml1.Save(output);
-                
-
 
             }
             catch (Exception)
@@ -49,41 +67,6 @@ namespace k180303_Q3
             
         }
 
-        public void MergeXMLStation210002()
-        {
-            try
-            {
-
-                string sourcedirectoy = ConfigurationManager.AppSettings["PathStation210002"];
-                var files = Directory.GetFiles(sourcedirectoy, "*.xml", SearchOption.AllDirectories);
-
-                string[] fileNameParse = files[0].Split("\\");
-                string[] temp = fileNameParse[4].Split("_");
-                string fileName = temp[0] + "_" + temp[1] + "_" + temp[2] + "_" + temp[3];
-
-                var xml02 = XDocument.Load(files[0]);
-
-                if (files.Length > 1)
-                {
-                    for (int count = 1; count < files.Length; count++)
-                    {
-                        var newxml = XDocument.Load(files[count]);
-                        xml02.Descendants("Votes").LastOrDefault().AddAfterSelf(newxml.Descendants("Votes"));
-                    }
-                }
-                string output = ConfigurationManager.AppSettings["Directory"];
-                output += "\\" + fileName + ".xml";
-                xml02.Save(output );
-            }
-            catch(Exception)
-            {
-                Console.WriteLine("Something went wrong!!");
-                System.Environment.Exit(0);
-            }
-            
-        }
-
-        
         static void Main(string[] args)
         {
 
@@ -97,29 +80,12 @@ namespace k180303_Q3
             {
                 Directory.CreateDirectory(directory);
             }
-           
-            var gparent = Directory.GetParent(Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName));
-            string root = gparent.ToString();
-            root += "\\k180303_Q4";
+            string sourceDirectory1 = ConfigurationManager.AppSettings["PathStation210001"];
+            string sourceDirectory2 = ConfigurationManager.AppSettings["PathStation210002"];
 
-            if(Directory.Exists(root))
-            {
-                DirectoryInfo di = new DirectoryInfo(root);
-                FileInfo[] fi = di.GetFiles("*.xml");
-                foreach (FileInfo filetemp in fi)
-                {
-                    filetemp.Delete();
-                }
-
-                fi = di.GetFiles("*.txt");
-                foreach (FileInfo filetemp in fi)
-                {
-                    filetemp.Delete();
-                }
-            }
             DataAggregation dataAggregation = new DataAggregation();
-            dataAggregation.MergeXMLStation210001();
-            dataAggregation.MergeXMLStation210002();
+            dataAggregation.MergeXML(sourceDirectory1);
+            dataAggregation.MergeXML(sourceDirectory2);
             Console.WriteLine("File Merging Process Has Been Completed");
             return;
     

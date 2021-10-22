@@ -69,7 +69,11 @@ namespace k180303_Q2
 
 
 
-            String candidateFile = ConfigurationManager.AppSettings["CandidateList"];
+             string candidateFile = ConfigurationManager.AppSettings["CandidateList"];
+             Dictionary<string, string> presidentCombo = new Dictionary<string, string>();
+             Dictionary<string, string> vicepresidentCombo = new Dictionary<string, string>();
+             Dictionary<string, string> generalsecretaryCombo = new Dictionary<string, string>();
+
             try
             {
                 if (File.Exists(candidateFile))
@@ -82,31 +86,55 @@ namespace k180303_Q2
                         if (candidatesList[candidate].Length > 0)
                         {
                             string[] parseCandidate = candidatesList[candidate].Split(", ");
-                            string name = parseCandidate[0] + " ( " + parseCandidate[1] + " )";
 
                             if (parseCandidate[2] == "President")
                             {
-
-                                PresidentComboBox.Items.Add(name);
-                                name = null;
+                                if(!presidentCombo.ContainsKey(parseCandidate[0]))
+                                {
+                                    presidentCombo.Add(parseCandidate[0], parseCandidate[1]);
+                                }
+                           
+                              
                             }
                             else if (parseCandidate[2] == "Vice President")
                             {
-                                VisePresidentComboBox.Items.Add(name);
-                                name = null;
+                                if (!vicepresidentCombo.ContainsKey(parseCandidate[0]))
+                                {
+                                    vicepresidentCombo.Add(parseCandidate[0], parseCandidate[1]);
+                                }
+                            
                             }
 
-                            else
+                            else if(parseCandidate[2] == "General Secretary")
                             {
-                                GeneralSecretaryComboBox.Items.Add(name);
-                                name = null;
+                                if (!generalsecretaryCombo.ContainsKey(parseCandidate[0]))
+                                {
+                                    generalsecretaryCombo.Add(parseCandidate[0], parseCandidate[1]);
+                                }
+                            
                             }
                         }
                     }
 
+
                 }
 
+                PresidentComboBox.DataSource = new BindingSource(presidentCombo, null);
+                PresidentComboBox.DisplayMember = "Value";
+                PresidentComboBox.ValueMember = "Key";
+                PresidentComboBox.Text = "Choose President";
+
+                VisePresidentComboBox.DataSource = new BindingSource(vicepresidentCombo, null);
+                VisePresidentComboBox.DisplayMember = "Value";
+                VisePresidentComboBox.ValueMember = "Key";
+                VisePresidentComboBox.Text = "Choose Vice President";
+
+                GeneralSecretaryComboBox.DataSource = new BindingSource(generalsecretaryCombo, null);
+                GeneralSecretaryComboBox.DisplayMember = "Value";
+                GeneralSecretaryComboBox.ValueMember = "Key";
+                GeneralSecretaryComboBox.Text = "Choose General Secretary";
             }
+
             catch (Exception)
             {
                 MessageBox.Show("File Or Directory Not Found!!", "Error 404", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -134,18 +162,9 @@ namespace k180303_Q2
                 return;
 
             }
+           
 
-            
-
-
-            string[] President = PresidentComboBox.Text.ToString().Split("(");
-            string PresidentID = President[0].Trim();
-            string[] VicePresident = VisePresidentComboBox.Text.ToString().Split("(");
-            string VicePresidentID = VicePresident[0].Trim();
-            string[] GeneralSecretary = GeneralSecretaryComboBox.Text.ToString().Split("(");
-            string GeneralSecretaryID = GeneralSecretary[0].Trim();
-
-            if (PresidentID == "Choose President" && VicePresidentID == "Choose Vice President" && GeneralSecretaryID == "Choose General Secretary")
+            if (PresidentComboBox.Text.ToString() == "Choose President" && VisePresidentComboBox.Text.ToString() == "Choose Vice President" && GeneralSecretaryComboBox.Text.ToString() == "Choose General Secretary")
             {
                 MessageBox.Show("Kindly Choose Atleast One Person !!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -182,30 +201,30 @@ namespace k180303_Q2
 
             }
 
-            if (PresidentID != "Choose President")
+            if (PresidentComboBox.Text.ToString() != "Choose President")
             {
                 voteobject.NIC = NIC;
                 voteobject.Position = "President";
-                voteobject.ID = PresidentID;
+                voteobject.ID = Convert.ToString(PresidentComboBox.SelectedValue); 
 
                 Vote newvote = new Vote(voteobject);
                 votes.Add(newvote);
 
             }
-            if (VicePresidentID != "Choose Vice President")
+            if (VisePresidentComboBox.Text.ToString() != "Choose Vice President")
             {
                 voteobject.NIC = NIC;
                 voteobject.Position = "Vice President";
-                voteobject.ID = VicePresidentID;
+                voteobject.ID = Convert.ToString(VisePresidentComboBox.SelectedValue); 
 
                 Vote newvote = new Vote(voteobject);
                 votes.Add(newvote);
             }
-            if (GeneralSecretaryID != "Choose General Secretary")
+            if (GeneralSecretaryComboBox.Text.ToString() != "Choose General Secretary")
             {
                 voteobject.NIC = NIC;
                 voteobject.Position = "General Secretary";
-                voteobject.ID = GeneralSecretaryID;
+                voteobject.ID = Convert.ToString(GeneralSecretaryComboBox.SelectedValue);
 
                 Vote newvote = new Vote(voteobject);
                 votes.Add(newvote);
