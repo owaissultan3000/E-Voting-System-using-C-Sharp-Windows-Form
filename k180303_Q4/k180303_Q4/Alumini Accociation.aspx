@@ -65,7 +65,7 @@
                     <% foreach (KeyValuePair<string, int> pair in President)
                                 { %>
                             <tr>
-                                <td><%= pair.Key %> </td>
+                                <td><%= CandidateList[pair.Key] %> </td>
                                 <td><%=pair.Value%></td>
                             </tr>
                             <% } %>   
@@ -89,7 +89,7 @@
                      <% foreach (KeyValuePair<string, int> pair in VicePresident)
                                 { %>
                             <tr>
-                                <td><%= pair.Key %> </td>
+                                <td><%= CandidateList[pair.Key] %> </td>
                                 <td><%=pair.Value%></td>
                             </tr>
                             <% } %>   
@@ -113,7 +113,7 @@
                            <% foreach (KeyValuePair<string, int> pair in GeneralSecratery)
                                 { %>
                             <tr>
-                                <td><%= pair.Key %> </td>
+                                <td><%= CandidateList[pair.Key] %> </td>
                                 <td><%=pair.Value%></td>
                             </tr>
                             <% } %>         

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -17,20 +18,21 @@ namespace k180303_Q4
         public Dictionary<string, int> GeneralSecratery = new Dictionary<string, int>();
         public Dictionary<string, string> CandidateList = new Dictionary<string, string>();
         
+
         protected void Page_Load(object sender, EventArgs e)
         {
-         
+
             string candidateList = ConfigurationManager.AppSettings["CandidateList"];
 
             try
             {
                 if (File.Exists(candidateList))
                 {
-                    char[] delims = new[] { '\r', '\n'};
+                    char[] delims = new[] { '\r', '\n' };
                     char[] delims2 = new[] { ',' };
 
                     string candidatesData = File.ReadAllText(candidateList);
-                   string[] candidatesList = candidatesData.Split(delims, StringSplitOptions.RemoveEmptyEntries);
+                    string[] candidatesList = candidatesData.Split(delims, StringSplitOptions.RemoveEmptyEntries);
 
                     for (int i = 0; i < candidatesList.Length; i++)
                     {
@@ -38,12 +40,28 @@ namespace k180303_Q4
                         {
                             string[] parseCandidate = candidatesList[i].Split(delims2, StringSplitOptions.RemoveEmptyEntries);
 
-                            if(!CandidateList.ContainsKey(parseCandidate[0]))
+                            if (!CandidateList.ContainsKey(parseCandidate[0]))
                             {
                                 CandidateList.Add(parseCandidate[0], parseCandidate[1]);
-                                parseCandidate = null;
+                                
                             }
-                            
+
+                            if(parseCandidate[2] == " President" && !President.ContainsKey(parseCandidate[0]))
+                            {
+                                President.Add(parseCandidate[0], 0);
+                            }
+
+                           else if (parseCandidate[2] == " Vice President" && !VicePresident.ContainsKey(parseCandidate[0]))
+                            {
+                                VicePresident.Add(parseCandidate[0], 0);
+                            }
+
+                           else if (parseCandidate[2] == " General Secretary" && !GeneralSecratery.ContainsKey(parseCandidate[0]))
+                            {
+                                GeneralSecratery.Add(parseCandidate[0], 0);
+                            }
+
+                            parseCandidate = null;
                         }
                     }
                 }
@@ -62,9 +80,9 @@ namespace k180303_Q4
             {
                 try
                 {
-                      XmlDocument xDoc = new XmlDocument();
-                     xDoc.Load(file);
-                    
+                    XmlDocument xDoc = new XmlDocument();
+                    xDoc.Load(file);
+
                     XmlNodeList amounts = xDoc.GetElementsByTagName("Vote");
                     foreach (XmlElement amount in amounts)
                     {
@@ -73,42 +91,27 @@ namespace k180303_Q4
 
                         if (position == "President")
                         {
-                            if (!President.ContainsKey(CandidateList[id]))
-                            {
-                                President.Add(CandidateList[id], 1);
-                            }
-                            else
-                            {
-                                ++President[CandidateList[id]];
-                            }
+                            
+                                ++President[id];
+                            
                         }
 
                         if (position == "Vice President")
                         {
-                            if (!VicePresident.ContainsKey(CandidateList[id]))
-                            {
-                                VicePresident.Add(CandidateList[id], 1);
-                            }
-                            else
-                            {
-                                ++VicePresident[CandidateList[id]];
-                            }
+                           
+                                ++VicePresident[id];
+                            
                         }
 
                         if (position == "General Secretary")
                         {
-                            if (!GeneralSecratery.ContainsKey(CandidateList[id]))
-                            {
-                                GeneralSecratery.Add(CandidateList[id], 1);
-                            }
-                            else
-                            {
-                                ++GeneralSecratery[CandidateList[id]];
-                            }
+                           
+                                ++GeneralSecratery[id];
+                            
                         }
                     }
                 }
-                catch (Exception )
+                catch (Exception)
                 {
                     Console.WriteLine("Something went wrong!!");
                     System.Environment.Exit(0);
@@ -120,7 +123,7 @@ namespace k180303_Q4
             President.Clear();
             foreach (var item in sortedDictionary)
             {
-                string  name = item.Key;
+                string name = item.Key;
                 int voteCount = item.Value;
                 President.Add(name, voteCount);
             }
